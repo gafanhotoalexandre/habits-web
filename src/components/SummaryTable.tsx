@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react'
 import dayjs from 'dayjs';
+import { useEffect, useState } from 'react';
 
+import { api } from '../lib/axios';
 import { generateDatesFromYearBeginning } from "../utils/generate-dates-from-year-beginning";
 import { HabitDay } from "./HabitDay";
-import { api } from '../lib/axios';
 
 const weekDays = [
 	'D',
@@ -33,12 +33,11 @@ export function SummaryTable() {
 	useEffect(() => {
 		api.get('/summary')
 			.then(response => {
-				console.log(response.data)
 				setSummary(response.data)
 			});
 	}, [])
 	return (
-		<div className="w-full flex">
+		<div className="w-full flex pb-2 overflow-x-scroll scrollbar-thin scrollbar-thumb-sky-500">
 			<aside className="grid grid-rows-7 grid-flow-row gap-3">
 
 				{weekDays.map((weekDay, index) => (
@@ -53,7 +52,7 @@ export function SummaryTable() {
 			</aside>
 
 			<main className="grid grid-rows-7 grid-flow-col gap-3">
-				{summaryDates.map(date => {
+				{summary.length > 0 && summaryDates.map(date => {
 					const dayInSummary = summary.find(day => {
 						return dayjs(date).isSame(day.date, 'day');
 					})
@@ -62,7 +61,7 @@ export function SummaryTable() {
 							key={date.toString()}
 							date={date}
 							amount={dayInSummary?.amount}
-							completed={dayInSummary?.completed}
+							defaultCompleted={dayInSummary?.completed}
 						/>
 					)
 				})}
